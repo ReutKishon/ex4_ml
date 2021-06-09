@@ -36,8 +36,7 @@ def euclidean_distance(row1, row2, p):
 def get_neighbors(train, test_row, num_neighbors, p):
 
     distances = list()
-    for train_row in train:
-
+    for idx, train_row in train.iterrows():
         dist = euclidean_distance(test_row, train_row, p)
         distances.append((train_row, dist))
     distances.sort(key=lambda tup: tup[1])
@@ -58,7 +57,7 @@ def predict_classification(train, test_row, num_neighbors, p):
 # kNN Algorithm
 def k_nearest_neighbors(train, test, num_neighbors, p):
     predictions = list()
-    for row in test:
+    for idx, row in test.iterrows():
         output = predict_classification(train, row, num_neighbors, p)
         predictions.append(output)
     return(predictions)
