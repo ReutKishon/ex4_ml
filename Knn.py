@@ -1,3 +1,4 @@
+from numpy.core.numeric import tensordot
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 from sklearn.model_selection import train_test_split
@@ -14,16 +15,17 @@ def read_data_from_file():
     return pd.read_csv('rectangle.txt', delim_whitespace=True, names=['x_val', 'y_val', 'label'])
 
 
-def split_data(data):
+def split_data(data, target):
     """
     Split dataset into training set and test set
     :param data: pandas data frame contains the data
     :return: train set, test set data frames
     """
-    return sklearn.model_selection.train_test_split(data, test_size=0.5,
-                                                    train_size=0.5)
+    return sklearn.model_selection.train_test_split(data, target, test_size=0.5)
 
 # calculate the Euclidean distance between two vectors wwith given p
+
+
 def euclidean_distance(row1, row2, p):
 
     distance = 0.0
@@ -36,8 +38,8 @@ def euclidean_distance(row1, row2, p):
 def get_neighbors(train, test_row, num_neighbors, p):
 
     distances = list()
-    for train_row in train:
-        
+
+    for train_row in train.itertuples():
         dist = euclidean_distance(test_row, train_row, p)
         distances.append((train_row, dist))
     distances.sort(key=lambda tup: tup[1])
@@ -50,7 +52,7 @@ def get_neighbors(train, test_row, num_neighbors, p):
 # Make a classification prediction with neighbors
 def predict_classification(train, test_row, num_neighbors, p):
     neighbors = get_neighbors(train, test_row, num_neighbors, p)
-    output_values = [row[-1] for row in neighbors]
+    output_values = [row.label for row in neighbors]
     prediction = max(set(output_values), key=output_values.count)
     return prediction
 
@@ -58,17 +60,20 @@ def predict_classification(train, test_row, num_neighbors, p):
 # kNN Algorithm
 def k_nearest_neighbors(train, test, num_neighbors, p):
     predictions = list()
-    for row in test:
+
+    for row in test.itertuples():
+
         output = predict_classification(train, row, num_neighbors, p)
         predictions.append(output)
-    return(predictions)
+    return predictions
 
 # Calculate accuracy percentage
 
 
 def accuracy_metric(actual, predicted):
     correct = 0
-    for i in range(len(actual)):
+
+    for i in range(len(actual)-1):
         if actual[i] == predicted[i]:
             correct += 1
     return correct / float(len(actual)) * 100.0
@@ -79,18 +84,16 @@ def accuracy_metric(actual, predicted):
 def runner():
     data = read_data_from_file()
 
-    X_train, X_test = split_data(data)
-    training_points, training_labels = X_train.iloc[:,
-                                                    :-1], X_train.iloc[:, [-1]]
-    test_points, test_labels = X_test.iloc[:, :-1], X_test.iloc[:, [-1]]
+    X_train, X_test, y_train, y_test = split_data(data, data['label'])
 
     for k in range(1, 10, 2):
 
         for p in [1, 2, float('inf')]:
 
-            predicted = k_nearest_neighbors(training_points, test_points, k, p)
-            accuracy = accuracy_metric(test_labels, predicted)
-            print("Accuracy:", 1 - accuracy)
+            predicted = k_nearest_neighbors(X_train, X_test, k, p)
+
+            accuracy = accuracy_metric(y_test.tolist(), predicted)
+            print("Accuracy:",  accuracy)
 
 
 if __name__ == "__main__":
