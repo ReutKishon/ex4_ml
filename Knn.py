@@ -78,22 +78,50 @@ def accuracy_metric(actual, predicted):
             correct += 1
     return correct / float(len(actual)) * 100.0
 
- # Convert string column to float
+
+def print_results(true_error_dict, empirical_error_dict):
+    for x in true_error_dict:
+        print("True error avg:",
+              true_error_dict[x]/100, "Empirical error avg:", empirical_error_dict[x]/100)
 
 
 def runner():
     data = read_data_from_file()
+    true_error_avarage = {}
+    empirical_error_avarage = {}
 
-    X_train, X_test, y_train, y_test = split_data(data, data['label'])
+    for i in range(100):
+        X_train, X_test, y_train, y_test = split_data(data, data['label'])
 
-    for k in range(1, 10, 2):
+        for k in range(1, 10, 2):
 
-        for p in [1, 2, float('inf')]:
+            for p in [1, 2, float('inf')]:
 
-            predicted = k_nearest_neighbors(X_train, X_test, k, p)
+                predicted_for_test = k_nearest_neighbors(X_train, X_test, k, p)
+                predicted_for_train = k_nearest_neighbors(
+                    X_train, X_train, k, p)
 
-            accuracy = accuracy_metric(y_test.tolist(), predicted)
-            print("Accuracy:",  accuracy)
+                true_error = 100 - \
+                    accuracy_metric(y_test.tolist(), predicted_for_test)
+                empirical_error = 100 - \
+                    accuracy_metric(y_train.tolist(), predicted_for_train)
+
+                if (i == 0):
+                    true_error_avarage["{},{}".format(p, k)] = true_error
+                    empirical_error_avarage["{},{}".format(
+                        p, k)] = empirical_error
+
+                else:
+
+                    res_t = true_error_avarage.get(
+                        "{},{}".format(p, k)) + true_error
+                    res_e = empirical_error_avarage.get(
+                        "{},{}".format(p, k)) + empirical_error
+                    true_error_avarage.update({"{},{}".format(p, k): res_t})
+                    empirical_error_avarage.update(
+                        {"{},{}".format(p, k): res_e})
+
+    print_results(true_error_avarage, empirical_error_avarage)
 
 
 if __name__ == "__main__":
