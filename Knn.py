@@ -30,7 +30,7 @@ def euclidean_distance(row1, row2, p):
 
     distance = 0.0
     for i in range(len(row1)-1):
-        distance += (row1[i] - row2[i])**p
+        distance += (abs(row1[i] - row2[i]))**p
     return distance**(1/p)
 
 
@@ -59,30 +59,31 @@ def predict_classification(train, test_row, num_neighbors, p):
 
 # kNN Algorithm
 def k_nearest_neighbors(train, test, num_neighbors, p):
-    predictions = list()
+    predictions = {}
 
     for row in test.itertuples():
 
         output = predict_classification(train, row, num_neighbors, p)
-        predictions.append(output)
+        predictions["{}".format(row.Index)] = output
     return predictions
 
 # Calculate accuracy percentage
 
 
-def accuracy_metric(actual, predicted):
+def accuracy_metric(actual, predicted_dict):
     correct = 0
 
-    for i in range(len(actual)-1):
-        if actual[i] == predicted[i]:
+    for i, v in actual.items():
+
+        if v == predicted_dict.get("{}".format(i)):
             correct += 1
-    return correct / float(len(actual)) * 100.0
+    return 1 - (correct / float(len(actual)))
 
 
 def print_results(true_error_dict, empirical_error_dict):
     for x in true_error_dict:
-        print("True error avg:",
-              true_error_dict[x]/100, "Empirical error avg:", empirical_error_dict[x]/100)
+        print("(", x, ")", "True error avg:", (true_error_dict.get(x)/100),
+              "Empirical error avg:", (empirical_error_dict.get(x)/100))
 
 
 def runner():
@@ -96,15 +97,13 @@ def runner():
         for k in range(1, 10, 2):
 
             for p in [1, 2, float('inf')]:
-
-                predicted_for_test = k_nearest_neighbors(X_train, X_test, k, p)
                 predicted_for_train = k_nearest_neighbors(
                     X_train, X_train, k, p)
 
-                true_error = 100 - \
-                    accuracy_metric(y_test.tolist(), predicted_for_test)
-                empirical_error = 100 - \
-                    accuracy_metric(y_train.tolist(), predicted_for_train)
+                predicted_for_test = k_nearest_neighbors(X_train, X_test, k, p)
+
+                empirical_error = accuracy_metric(y_train, predicted_for_train)
+                true_error = accuracy_metric(y_test, predicted_for_test)
 
                 if (i == 0):
                     true_error_avarage["{},{}".format(p, k)] = true_error
