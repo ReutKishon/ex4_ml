@@ -23,10 +23,15 @@ def split_data(data, target):
     """
     return sklearn.model_selection.train_test_split(data, target, test_size=0.5)
 
-# calculate the Euclidean distance between two vectors wwith given p
-
 
 def euclidean_distance(row1, row2, p):
+    """
+    calculate the Euclidean distance between two vectors with given p
+    :param row1:
+    :param row2:
+    :param p:
+    :return:
+    """
 
     distance = 0.0
     for i in range(len(row1)-1):
@@ -34,8 +39,15 @@ def euclidean_distance(row1, row2, p):
     return distance**(1/p)
 
 
-# Locate the most similar neighbors
 def get_neighbors(train, test_row, num_neighbors, p):
+    """
+    Locate the most similar neighbors
+    :param train:
+    :param test_row:
+    :param num_neighbors:
+    :param p:
+    :return:
+    """
 
     distances = list()
 
@@ -49,16 +61,33 @@ def get_neighbors(train, test_row, num_neighbors, p):
     return neighbors
 
 
-# Make a classification prediction with neighbors
+
 def predict_classification(train, test_row, num_neighbors, p):
+    """
+    Make a classification prediction with neighbors
+    :param train:
+    :param test_row:
+    :param num_neighbors:
+    :param p:
+    :return:
+    """
+
     neighbors = get_neighbors(train, test_row, num_neighbors, p)
     output_values = [row.label for row in neighbors]
     prediction = max(set(output_values), key=output_values.count)
     return prediction
 
 
-# kNN Algorithm
+
 def k_nearest_neighbors(train, test, num_neighbors, p):
+    """
+    kNN Algorithm
+    :param train:
+    :param test:
+    :param num_neighbors:
+    :param p:
+    :return:
+    """
     predictions = {}
 
     for row in test.itertuples():
@@ -67,10 +96,16 @@ def k_nearest_neighbors(train, test, num_neighbors, p):
         predictions["{}".format(row.Index)] = output
     return predictions
 
-# Calculate accuracy percentage
+
 
 
 def accuracy_metric(actual, predicted_dict):
+    """
+    Calculate accuracy percentage
+    :param actual:
+    :param predicted_dict:
+    :return:
+    """
     correct = 0
 
     for i, v in actual.items():
