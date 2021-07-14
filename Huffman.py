@@ -3,8 +3,9 @@ import math
 
 def shannon_entropy(hebrew_freq, name):
     res = 0
-    for c in name:
-        res += hebrew_freq [ c ] * math.log2(hebrew_freq [ c ])
+    for c in hebrew_freq.values():
+        res += c * math.log2(c)
+        # res += hebrew_freq [ c ] * math.log2(hebrew_freq [ c ])
     return res * -1
 
 
@@ -100,7 +101,9 @@ def print_encoded_first_name(results_dict, hebrew_letters_freq):
             break
     print(f"in huffman code:{s}")
     # huffman_on_name(first_name1)
-    print(f"shannon entropy = {shannon_entropy(hebrew_letters_freq, first_name1)}")
+    eta = shannon_entropy(hebrew_letters_freq, first_name1)
+    print(f"Shannon Entropy for hebrew letters = {eta}")
+    print(f"Entropy vs. name: {len(first_name1) * eta} - {len(s)} = {len(first_name1) * eta - len(s)}")
 
 
 def huffman_on_name(first_name1):
@@ -118,7 +121,6 @@ def huffman_on_name(first_name1):
     for c in first_name1:
         print(results_dict_name [ c ], end="")
     print()
-    print(shannon_entropy(freq_dict, first_name1))
 
 
 def run():
