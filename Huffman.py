@@ -82,8 +82,7 @@ def concat_huffman_bin_values(huffman_code, i, num, probability):
 
 def fill_probabilities(freq):
     freq = sorted(freq.items(), reverse=True, key=lambda x: x [ 1 ])
-    probabilities: list [ float ] = sorted([ float("{:.2f}".format(frequency [ 1 ])) for frequency in freq ],
-                                           reverse=True)
+    probabilities: list [ float ] = sorted([ frequency [ 1 ] for frequency in freq ], reverse=True)
     return freq, probabilities
 
 
@@ -95,12 +94,13 @@ def print_encoded_first_name(results_dict, hebrew_letters_freq):
 
         except KeyError:
             print(
-                "did you enter the name in hebrew or are there spaces of final letters in it?\n please try to run again")
+                """Did you enter the name in hebrew or are there spaces of final letters in it?\n 
+                    please try to run again""")
         else:
             break
     print(f"in huffman code:{s}")
     # huffman_on_name(first_name1)
-    print(f"shannon enteopy = {shannon_entropy(hebrew_letters_freq, first_name1)}")
+    print(f"shannon entropy = {shannon_entropy(hebrew_letters_freq, first_name1)}")
 
 
 def huffman_on_name(first_name1):
@@ -111,10 +111,10 @@ def huffman_on_name(first_name1):
     freq, probabilities = fill_probabilities(freq_dict)
     huffman_code = compute_code(probabilities)
     results_dict_name = {}
-    for id, char in enumerate(freq):
-        if huffman_code [ id ] == '':
+    for idx, char in enumerate(freq):
+        if huffman_code [ idx ] == '':
             continue
-        results_dict_name [ char [ 0 ] ] = huffman_code [ id ]
+        results_dict_name [ char [ 0 ] ] = huffman_code [ idx ]
     for c in first_name1:
         print(results_dict_name [ c ], end="")
     print()

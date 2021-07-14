@@ -1,8 +1,3 @@
-from numpy.core.numeric import tensordot
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import metrics
-from sklearn.model_selection import train_test_split
-import numpy as np
 import pandas as pd
 import sklearn.model_selection
 
@@ -134,15 +129,15 @@ def print_results(true_error_dict, empirical_error_dict):
 
 def runner():
     data = read_data_from_file()
-    true_error_avarage = {}
-    empirical_error_avarage = {}
+    true_error_average = {}
+    empirical_error_average = {}
 
     for i in range(100):
-        X_train, X_test, y_train, y_test = split_data(data, data['label'])
+        X_train, X_test, y_train, y_test = split_data(data, data [ 'label' ])
 
         for k in range(1, 10, 2):
 
-            for p in [1, 2, float('inf')]:
+            for p in [ 1, 2, float('inf') ]:
                 predicted_for_train = k_nearest_neighbors(
                     X_train, X_train, k, p)
 
@@ -153,21 +148,21 @@ def runner():
                 true_error = 1 - accuracy_metric(y_test, predicted_for_test)
 
                 if (i == 0):
-                    true_error_avarage["{},{}".format(p, k)] = true_error
-                    empirical_error_avarage["{},{}".format(
-                        p, k)] = empirical_error
+                    true_error_average [ "{},{}".format(p, k) ] = true_error
+                    empirical_error_average [ "{},{}".format(
+                        p, k) ] = empirical_error
 
                 else:
 
-                    res_t = true_error_avarage.get(
+                    res_t = true_error_average.get(
                         "{},{}".format(p, k)) + true_error
-                    res_e = empirical_error_avarage.get(
+                    res_e = empirical_error_average.get(
                         "{},{}".format(p, k)) + empirical_error
-                    true_error_avarage.update({"{},{}".format(p, k): res_t})
-                    empirical_error_avarage.update(
+                    true_error_average.update({"{},{}".format(p, k): res_t})
+                    empirical_error_average.update(
                         {"{},{}".format(p, k): res_e})
 
-    print_results(true_error_avarage, empirical_error_avarage)
+    print_results(true_error_average, empirical_error_average)
 
 
 if __name__ == "__main__":
