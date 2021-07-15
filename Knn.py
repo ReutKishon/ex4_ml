@@ -47,7 +47,7 @@ def get_neighbors(train, test_row, num_neighbors, p):
 
     distances = list()
 
-    for train_row in train.itertuples():
+    for Index, train_row in train.iterrows():
         dist = euclidean_distance(test_row, train_row, p)
         distances.append((train_row, dist))
     distances = sorted(distances, key=lambda t: t [ 1 ])
@@ -75,6 +75,7 @@ def predict_classification(train, test_row, num_neighbors, p):
     """
 
     neighbors = get_neighbors(train, test_row, num_neighbors, p)
+
     output_values = [row.label for row in neighbors]
     # return the most represented class among the neighbors.
     prediction = max(set(output_values), key=output_values.count)
@@ -99,9 +100,9 @@ def k_nearest_neighbors(train_set, test_set, num_neighbors, p):
 
     predictions = {}
 
-    for row in test_set.itertuples():
+    for index, row in test_set.iterrows():
         output = predict_classification(train_set, row, num_neighbors, p)
-        predictions[row.Index] = output
+        predictions [ index ] = output
     return predictions
 
 
@@ -115,15 +116,18 @@ def accuracy_metric(actual, predicted):
     correct = 0
 
     for i, v in actual.items():
-        if v == predicted[i]:
+        if v == predicted [ i ]:
             correct += 1
     return correct / len(actual)
 
 
+tests_num = 100
+
+
 def print_results(true_error_dict, empirical_error_dict):
     for x in true_error_dict:
-        print("(", x, ")", "True error avg:", true_error_dict.get(x)/100,
-              "Empirical error avg:", empirical_error_dict.get(x)/100)
+        print("(", x, ")", "True error avg:", true_error_dict.get(x) / tests_num,
+              "Empirical error avg:", empirical_error_dict.get(x) / tests_num)
 
 
 def runner():
@@ -131,7 +135,7 @@ def runner():
     true_error_average = {}
     empirical_error_average = {}
 
-    for i in range(100):
+    for i in range(tests_num):
         X_train, X_test, y_train, y_test = split_data(data, data [ 'label' ])
 
         for k in range(1, 10, 2):
@@ -169,3 +173,5 @@ if __name__ == "__main__":
 
 def test_distance():
     assert euclidean_distance([ 2, 4 ], [ -3, 8 ], 2) == pytest.approx(6.403, 0.001)
+    assert euclidean_distance([ 2, 4 ], [ -3, 8 ], 1) == 9
+    assert euclidean_distance([ 2, 4 ], [ -3, 8 ], float('inf')) == 1
