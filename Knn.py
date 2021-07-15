@@ -2,6 +2,23 @@ import pandas as pd
 import pytest
 import sklearn.model_selection
 
+"""
+( 1,1 ) True error avg: 0.0016000000000000003 Empirical error avg: 0.0
+( 2,1 ) True error avg: 0.0030666666666666663 Empirical error avg: 0.0
+( inf,1 ) True error avg: 0.008266666666666667 Empirical error avg: 0.006666666666666667
+( 1,3 ) True error avg: 0.002266666666666667 Empirical error avg: 0.0009333333333333338
+( 2,3 ) True error avg: 0.003466666666666667 Empirical error avg: 0.0019999999999999996
+( inf,3 ) True error avg: 0.008266666666666667 Empirical error avg: 0.006666666666666667
+( 1,5 ) True error avg: 0.0019999999999999996 Empirical error avg: 0.001466666666666666
+( 2,5 ) True error avg: 0.003733333333333333 Empirical error avg: 0.002133333333333334
+( inf,5 ) True error avg: 0.0017333333333333335 Empirical error avg: 0.0033333333333333335
+( 1,7 ) True error avg: 0.0018666666666666664 Empirical error avg: 0.0019999999999999996
+( 2,7 ) True error avg: 0.0030666666666666663 Empirical error avg: 0.0024
+( inf,7 ) True error avg: 0.0017333333333333335 Empirical error avg: 0.0033333333333333335
+( 1,9 ) True error avg: 0.0018666666666666664 Empirical error avg: 0.0019999999999999996
+( 2,9 ) True error avg: 0.0030666666666666663 Empirical error avg: 0.0028000000000000004
+( inf,9 ) True error avg: 0.0017333333333333335 Empirical error avg: 0.0033333333333333335
+"""
 
 def read_data_from_file():
     """
@@ -49,7 +66,7 @@ def get_neighbors(train, test_row, num_neighbors, p):
 
     for Index, train_row in train.iterrows():
         dist = euclidean_distance(test_row, train_row, p)
-        distances.append((train_row, dist))
+        distances.append((train_row, dist, Index))
     distances = sorted(distances, key=lambda t: t [ 1 ])
 
     neighbors = list()
@@ -118,10 +135,11 @@ def accuracy_metric(actual, predicted):
     for i, v in actual.items():
         if v == predicted [ i ]:
             correct += 1
+
     return correct / len(actual)
 
 
-tests_num = 100
+tests_num = 1
 
 
 def print_results(true_error_dict, empirical_error_dict):
@@ -149,6 +167,7 @@ def runner():
                 empirical_error = 1 - \
                     accuracy_metric(y_train, predicted_for_train)
                 true_error = 1 - accuracy_metric(y_test, predicted_for_test)
+
                 if (i == 0):
                     true_error_average [ "{},{}".format(p, k) ] = true_error
                     empirical_error_average [ "{},{}".format(
