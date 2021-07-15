@@ -18,6 +18,9 @@ import sklearn.model_selection
 ( 1,9 ) True error avg: 0.0018666666666666664 Empirical error avg: 0.0019999999999999996
 ( 2,9 ) True error avg: 0.0030666666666666663 Empirical error avg: 0.0028000000000000004
 ( inf,9 ) True error avg: 0.0017333333333333335 Empirical error avg: 0.0033333333333333335
+
+We don't think that there is an overfitting, since almost all of them has True error that is similar to test error
+Best k is where k = 1
 """
 
 def read_data_from_file():
