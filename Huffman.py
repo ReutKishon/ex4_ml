@@ -1,3 +1,40 @@
+"""
+IDs: 300241023 206966517
+
+אות | קוד הופמן
+----------------------
+ 'י'  |         110
+ 'ה'  |         100
+ 'ו'  |         101
+ 'מ'  |        0111
+ 'ל'  |        0101
+ 'א'  |        0010
+ 'ר'  |        0011
+ 'ת'  |        1111
+ 'ב'  |       01100
+ 'ש'  |       01000
+ 'נ'  |       00010
+ 'כ'  |       00011
+ 'ע'  |       00000
+ 'ד'  |       11100
+ 'ח'  |      011010
+ 'ק'  |      011011
+ 'פ'  |      010010
+ 'ס'  |      010011
+ 'צ'  |      000010
+ 'ז'  |      000011
+ 'ג'  |      111010
+ 'ט'  |      111011
+
+Shannon Entropy for hebrew letters = 4.13811108142068
+
+רפי in huffman code:0011010010110
+Entropy vs. name: 12.41433324426204 - 13 = -0.5856667557379591
+
+רעות in huffman code:0011000001011111
+Entropy vs. name: 16.55244432568272 - 16 = 0.5524443256827212
+"""
+
 import math
 
 
@@ -88,18 +125,20 @@ def fill_probabilities(freq):
 
 
 def print_encoded_first_name(results_dict, hebrew_letters_freq):
-    while True:
-        try:
-            first_name1 = input("please enter your first name: ")
-            s = ''.join(map(str, [ results_dict [ c ] for c in first_name1 ]))
+    first_name1 = input("please enter your first name: ")
+    print_encoded_first_name_internal(first_name1, hebrew_letters_freq, results_dict)
 
-        except KeyError:
-            print(
-                """Did you enter the name in hebrew or are there spaces of final letters in it?\n 
-                    please try to run again""")
-        else:
-            break
-    print(f"in huffman code:{s}")
+
+def print_encoded_first_name_internal(first_name1, hebrew_letters_freq, results_dict):
+    try:
+        s = ''.join(map(str, [ results_dict [ c ] for c in first_name1 ]))
+
+    except KeyError:
+        print(
+            """Did you enter the name in hebrew or are there spaces of final letters in it?\n 
+                please try to run again""")
+
+    print(f"{first_name1} in huffman code:{s}")
     # huffman_on_name(first_name1)
     eta = shannon_entropy(hebrew_letters_freq, first_name1)
     print(f"Shannon Entropy for hebrew letters = {eta}")
@@ -147,6 +186,8 @@ def run():
         results_dict [ char [ 0 ] ] = huffman_code [ idx ]
     characteristics_huffman_code(probabilities, huffman_code)
     for _ in range(2):
+        print_encoded_first_name_internal("רפי", hebrew_letters_freq_dict, results_dict)
+        print_encoded_first_name_internal("רעות", hebrew_letters_freq_dict, results_dict)
         print_encoded_first_name(results_dict, hebrew_letters_freq_dict)
     exit()
 

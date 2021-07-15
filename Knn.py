@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 import sklearn.model_selection
 
 
@@ -49,10 +50,11 @@ def get_neighbors(train, test_row, num_neighbors, p):
     for train_row in train.itertuples():
         dist = euclidean_distance(test_row, train_row, p)
         distances.append((train_row, dist))
-    distances.sort(key=lambda tup: tup[1])
+    distances = sorted(distances, key=lambda t: t [ 1 ])
+
     neighbors = list()
     for i in range(num_neighbors):
-        neighbors.append(distances[i][0])
+        neighbors.append(distances [ i ] [ 0 ])
     return neighbors
 
 
@@ -98,7 +100,6 @@ def k_nearest_neighbors(train_set, test_set, num_neighbors, p):
     predictions = {}
 
     for row in test_set.itertuples():
-
         output = predict_classification(train_set, row, num_neighbors, p)
         predictions[row.Index] = output
     return predictions
@@ -111,14 +112,12 @@ def accuracy_metric(actual, predicted):
     :param predicted_dict:
     :return:
     """
-
     correct = 0
 
     for i, v in actual.items():
-
         if v == predicted[i]:
             correct += 1
-    return (correct / float(len(actual)))
+    return correct / len(actual)
 
 
 def print_results(true_error_dict, empirical_error_dict):
@@ -146,7 +145,6 @@ def runner():
                 empirical_error = 1 - \
                     accuracy_metric(y_train, predicted_for_train)
                 true_error = 1 - accuracy_metric(y_test, predicted_for_test)
-
                 if (i == 0):
                     true_error_average [ "{},{}".format(p, k) ] = true_error
                     empirical_error_average [ "{},{}".format(
@@ -167,3 +165,7 @@ def runner():
 
 if __name__ == "__main__":
     runner()
+
+
+def test_distance():
+    assert euclidean_distance([ 2, 4 ], [ -3, 8 ], 2) == pytest.approx(6.403, 0.001)
